@@ -1,3 +1,5 @@
+console.log("MAIN.JS LOADED ✅", new Date().toISOString());
+
 /* =========================================================
    GLOBAL HELPERS (Device, Safe selectors, RAF throttle)
 ========================================================= */

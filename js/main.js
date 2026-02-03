@@ -1,5 +1,4 @@
-console.log("MAIN.JS LOADED ✅", new Date().toISOString());
-
+<script>
 /* =========================================================
    GLOBAL HELPERS (Device, Safe selectors, RAF throttle)
 ========================================================= */
@@ -66,6 +65,87 @@ document.addEventListener("DOMContentLoaded", () => {
     if (window.ScrollTrigger) ScrollTrigger.refresh();
   });
 });
+
+
+/* =========================================================
+   PAGE TRANSITION (jQuery + safe fallback)
+========================================================= */
+
+function initPageTransition() {
+  // If jQuery isn't present — do nothing (prevents hard errors)
+  if (!window.jQuery) return;
+
+  const $ = window.jQuery;
+  const transitionTrigger = $(".transition-trigger");
+  const introDurationMS = 1800;
+  const exitDelayBeforeRedirect = 400;
+  const excludedClass = "no-transition";
+  const pauseBeforeStart = 200;
+
+  function runIntro() {
+    if (!transitionTrigger.length) return;
+
+    $("body").addClass("no-scroll-transition");
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setTimeout(() => transitionTrigger.trigger("click"), pauseBeforeStart);
+      });
+    });
+
+    setTimeout(() => $("body").removeClass("no-scroll-transition"), introDurationMS + pauseBeforeStart);
+  }
+
+  // Normal load
+  Webflow.push(runIntro);
+
+  // BFCache (back/forward)
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+
+    try {
+      const ix2 = Webflow.require("ix2");
+      ix2.destroy();
+      ix2.init();
+    } catch (e) {}
+
+    Webflow.push(runIntro);
+  });
+
+  // Exit handler
+  $(document).on("click", "a", function (e) {
+    const link = $(this);
+
+    const href = link.attr("href") || "";
+    if (!href) return;
+
+    // Ignore anchors, external, new tabs, mailto/tel, excluded
+    if (href.startsWith("#")) return;
+    if (href.startsWith("mailto:") || href.startsWith("tel:")) return;
+
+    const currentPath = window.location.pathname;
+    const linkPath = link.prop("pathname");
+    const isSamePageAnchorLink = currentPath === linkPath && href.includes("#");
+
+    const isInternalLink =
+      link.prop("hostname") === window.location.host &&
+      !link.hasClass(excludedClass) &&
+      link.attr("target") !== "_blank" &&
+      transitionTrigger.length > 0 &&
+      !isSamePageAnchorLink;
+
+    if (!isInternalLink) return;
+
+    e.preventDefault();
+
+    $("body").addClass("no-scroll-transition");
+    transitionTrigger.trigger("click");
+
+    setTimeout(() => {
+      window.location.href = href;
+    }, exitDelayBeforeRedirect);
+  });
+}
 
 
 /* =========================================================
@@ -1600,3 +1680,4 @@ function initGroupEngine() {
   requestAnimationFrame(() => ScrollTrigger.refresh());
 }
 
+</script>

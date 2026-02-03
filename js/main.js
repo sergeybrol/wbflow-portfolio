@@ -1692,4 +1692,6 @@ function initGroupEngine() {
   });
 
   requestAnimationFrame(() => ScrollTrigger.refresh());
+
+   /*new*/
 }

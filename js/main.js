@@ -1,4 +1,3 @@
-<script>
 /* =========================================================
    GLOBAL HELPERS (Device, Safe selectors, RAF throttle)
 ========================================================= */
@@ -1679,5 +1678,3 @@ function initGroupEngine() {
 
   requestAnimationFrame(() => ScrollTrigger.refresh());
 }
-
-</script>

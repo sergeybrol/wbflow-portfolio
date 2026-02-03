@@ -1382,9 +1382,7 @@ function initGroupEngine() {
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Aligned with your existing engines (text + reveal)
   const DEFAULTS = {
-    // Responsive starts
     startDesktop: "top 92%",
     startTablet:  "top 94%",
     startMobile:  "top 96%",
@@ -1393,7 +1391,6 @@ function initGroupEngine() {
     baseDelay: 0,
     mediaDelay: 0.12,
 
-    // Text reveal (same principle as initTextRevealEngine)
     text: {
       yPercent: 120,
       ease: "power1.out",
@@ -1404,7 +1401,6 @@ function initGroupEngine() {
       staggerLines: 0.10
     },
 
-    // Media fade-up (same idea as initRevealElementsEngine fade-up)
     media: {
       yDesktop: 24,
       yTablet:  20,
@@ -1413,7 +1409,6 @@ function initGroupEngine() {
       ease: "power2.out"
     },
 
-    // Decor corners (simple)
     decor: {
       duration: 0.55,
       ease: "power2.out",
@@ -1449,8 +1444,10 @@ function initGroupEngine() {
     return DEFAULTS.startDesktop;
   };
 
-  // Mask wrap for split pieces (clipping fix)
-  const applyMaskWrap = (targets) => {
+  // Mask wrap:
+  // - for WORDS: baseline + no padding/margin fix (prevents "stairs" + layout shifts)
+  // - for LINES: apply padding/margin anti-clipping fix
+  const applyMaskWrap = (targets, mode /* "words" | "lines" */) => {
     targets.forEach((t) => {
       const parent = t.parentElement;
       if (parent && parent.hasAttribute("data-group-mask-wrap")) return;
@@ -1458,40 +1455,60 @@ function initGroupEngine() {
       const wrap = document.createElement("span");
       wrap.setAttribute("data-group-mask-wrap", "true");
 
-      wrap.style.display = "inline-block";
+      wrap.style.display = mode === "lines" ? "block" : "inline-block";
       wrap.style.overflow = "hidden";
-      wrap.style.verticalAlign = "bottom";
       wrap.style.lineHeight = "inherit";
+      wrap.style.verticalAlign = "baseline"; // ✅ key fix
 
-      const pad = DEFAULTS.text.maskPadEm;
-      wrap.style.paddingBottom = `${pad}em`;
-      wrap.style.marginBottom  = `-${pad}em`;
-
-      if (t.classList.contains("line")) {
-        wrap.style.display = "block";
+      if (mode === "lines") {
         wrap.style.width = "100%";
+
+        const pad = DEFAULTS.text.maskPadEm;
+        wrap.style.paddingBottom = `${pad}em`;
+        wrap.style.marginBottom  = `-${pad}em`;
       }
 
       parent.insertBefore(wrap, t);
       wrap.appendChild(t);
 
-      t.style.display = t.classList.contains("line") ? "block" : "inline-block";
+      t.style.display = mode === "lines" ? "block" : "inline-block";
     });
   };
 
-  const splitPrep = (el, type /* "words"|"lines" */) => {
-    if (!el) return [];
-    new SplitType(el, { types: type, tagName: "span" });
+  // Revert SplitType safely (prevents double-wrapping on refresh/resize)
+  const safeRevertSplit = (el) => {
+    try {
+      if (el && el.classList && el.querySelector(".word, .line, .char")) {
+        SplitType.revert(el);
+      }
+    } catch (e) {}
+  };
 
-    const targets =
-      type === "words" ? el.querySelectorAll(".word") :
-      type === "lines" ? el.querySelectorAll(".line") : [];
+  // Split prep for a list of elements (supports multiple titles/texts)
+  const splitPrepAll = (elements, type /* "words"|"lines" */) => {
+    const allTargets = [];
 
-    if (!targets.length) return [];
+    elements.forEach((el) => {
+      if (!el) return;
 
-    applyMaskWrap(targets);
-    gsap.set(targets, { yPercent: DEFAULTS.text.yPercent, opacity: 1, force3D: true });
-    return targets;
+      // ✅ prevent double DOM mutations
+      safeRevertSplit(el);
+
+      new SplitType(el, { types: type, tagName: "span" });
+
+      const targets =
+        type === "words" ? el.querySelectorAll(".word") :
+        type === "lines" ? el.querySelectorAll(".line") : [];
+
+      if (!targets.length) return;
+
+      applyMaskWrap(targets, type);
+      gsap.set(targets, { yPercent: DEFAULTS.text.yPercent, opacity: 1, force3D: true });
+
+      targets.forEach((t) => allTargets.push(t));
+    });
+
+    return allTargets;
   };
 
   const prepMedia = (el) => {
@@ -1502,7 +1519,7 @@ function initGroupEngine() {
     return el;
   };
 
-  // Decor: 4 corner lines scale from center
+  // Decor corners: 4 div lines scale from center
   const buildDecorTween = (wrapper) => {
     const corners = wrapper.querySelectorAll('[data-g="decor"]');
     if (!corners.length) return null;
@@ -1525,8 +1542,8 @@ function initGroupEngine() {
       play: (tl, atTime) => {
         tl.to(corners, {
           opacity: 1,
-          scaleX: (i, el) => (el.dataset.cornerAxis === "x" ? 1 : 1),
-          scaleY: (i, el) => (el.dataset.cornerAxis === "y" ? 1 : 1),
+          scaleX: 1,
+          scaleY: 1,
           duration: DEFAULTS.decor.duration,
           ease: DEFAULTS.decor.ease,
           stagger: { each: DEFAULTS.decor.stagger },
@@ -1539,14 +1556,13 @@ function initGroupEngine() {
 
   // ---------- presets ----------
   const PRESETS = {
-    // Process step: title(words) + text(lines) + media(fade-up)
     step: (wrapper, cfg) => {
-      const titleEl = wrapper.querySelector('[data-g="title"]');
-      const textEl  = wrapper.querySelector('[data-g="text"]');
-      const mediaEl = wrapper.querySelector('[data-g="media"]');
+      const titleEls = wrapper.querySelectorAll('[data-g="title"]');
+      const textEls  = wrapper.querySelectorAll('[data-g="text"]');
+      const mediaEl  = wrapper.querySelector('[data-g="media"]');
 
-      const titleWords = splitPrep(titleEl, "words");
-      const textLines  = splitPrep(textEl, "lines");
+      const titleWords = splitPrepAll(titleEls, "words");
+      const textLines  = splitPrepAll(textEls, "lines");
       const media = prepMedia(mediaEl);
 
       const tl = gsap.timeline({ paused: true });
@@ -1589,16 +1605,15 @@ function initGroupEngine() {
       return tl;
     },
 
-    // Card: decor(corners) + title(words) + text(lines) + media(optional)
     card: (wrapper, cfg) => {
-      const titleEl = wrapper.querySelector('[data-g="title"]');
-      const textEl  = wrapper.querySelector('[data-g="text"]');
-      const mediaEl = wrapper.querySelector('[data-g="media"]');
+      const titleEls = wrapper.querySelectorAll('[data-g="title"]');
+      const textEls  = wrapper.querySelectorAll('[data-g="text"]');
+      const mediaEl  = wrapper.querySelector('[data-g="media"]');
 
       const decor = buildDecorTween(wrapper);
 
-      const titleWords = splitPrep(titleEl, "words");
-      const textLines  = splitPrep(textEl, "lines");
+      const titleWords = splitPrepAll(titleEls, "words");
+      const textLines  = splitPrepAll(textEls, "lines");
       const media = prepMedia(mediaEl);
 
       const tl = gsap.timeline({ paused: true });

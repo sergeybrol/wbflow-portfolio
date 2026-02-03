@@ -1357,5 +1357,3 @@ function initRevealElementsEngine() {
   requestAnimationFrame(() => ScrollTrigger.refresh());
 }
 
-   /*new*/
-}

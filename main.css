@@ -1,0 +1,937 @@
+<link rel="prefetch" href="/" as="document">
+<link rel="prefetch" href="/work/girafi" as="document">
+<link rel="prefetch" href="/work/dayta" as="document">
+<link rel="prefetch" href="/work/fineasy" as="document">
+<link rel="prefetch" href="/work/mentorhive" as="document">
+<link rel="prefetch" href="/work/horizon-architects" as="document">
+
+<style>
+  
+  /*
+  * {
+    font-feature-settings: 'ss02' on, 'ss03' on, 'liga' off !important;
+  }
+  */
+  
+  .w-button{
+   	background-color: transparent;
+  }
+  
+  body .transition {
+    display: block;
+  }
+  
+  .w-editor .transition {
+    display: none;
+	}
+  
+  body.page-loaded .transition {
+    visibility: visible;
+  }
+    
+    @media screen and (min-width: 1024px) {
+    .featured-work:hover .featured-work-video {
+      opacity: 1;
+    }
+
+    .featured-work:hover .featured-work-image {
+      opacity: 0;
+    }
+
+    .featured-work:hover .featured-work-preview {
+      border-radius: 0.75rem;
+    }
+
+    .featured-work:hover .featured-work-text {
+      transform: translate(0px,-0.5rem);
+    }
+  }
+
+  
+	/* For mobile menu */
+  body.is-menu-open {
+    overflow: hidden;
+    height: 100vh;
+  }
+  
+  body.is-menu-open .menu-wrapper {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+  
+  body.is-menu-open .menu-backdrop {
+  opacity: 1;
+  pointer-events: auto;
+	}
+  
+  .menu-wrapper.no-events {
+    pointer-events: none;
+  }
+
+  .menu-wrapper.with-events {
+    pointer-events: auto;
+  }
+  
+  .menu-backdrop.no-events {
+  pointer-events: none;
+  }
+
+  .menu-backdrop.with-events {
+    pointer-events: auto;
+  }
+
+  
+  /* Приховує стандартний скролбар, але дозволяє скрол */
+  html,
+  body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  /* Кастомний скролбар */
+  .custom-scrollbar {
+    position: fixed;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 100%;
+    background-color: transparent;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .custom-scrollbar .thumb {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 4px;
+    position: absolute;
+    top: 0;
+    height: 60px;
+    transition: background 0.3s ease-out;
+  }
+
+  .custom-scrollbar.visible {
+    opacity: 1;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .custom-scrollbar {
+      display: none;
+    }
+  }
+  
+  /* Повний reset від Webflow */
+  input.form-field,
+  textarea.form-field {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
+    font: inherit;
+    color: #fff;
+    background: transparent;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+    font-size: var(--_typography---responsive--h4);
+    font-weight: 400;
+  }
+
+  textarea.form-field {
+    white-space: pre-wrap;       /* поважає переноси й розриви рядків */
+    word-break: break-word;      /* переносить довгі слова */
+    overflow-wrap: break-word;   /* резервна підтримка */
+    overflow-y: auto;
+    scrollbar-width: none;           /* Firefox */
+    height: 9.625rem;
+    resize: vertical; 
+    resize: none;
+  }
+
+  textarea.form-field::-webkit-scrollbar {
+    display: none;                   /* Chrome, Safari */
+  }
+
+
+  /* 🔹 Підсвічування при фокусі */
+  input.form-field:focus,
+  textarea.form-field:focus {
+    outline: none;
+    border-bottom-color: rgba(255,255,255,0.5);
+  }
+
+  input.form-field:-webkit-autofill,
+  input.form-field:-webkit-autofill:hover,
+  input.form-field:-webkit-autofill:focus,
+  textarea.form-field:-webkit-autofill,
+  textarea.form-field:-webkit-autofill:hover,
+  textarea.form-field:-webkit-autofill:focus {
+    -webkit-text-fill-color: #fff !important;        /* 🔥 ЦЕ головне — текст стане білим */
+    caret-color: #fff;
+    background-color: transparent !important;
+    transition: background-color 9999s ease-in-out 0s;
+    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  }
+
+
+  /* 🧱 Обгортка */
+  .form-field-underline {
+    position: relative;
+  }
+
+  /* 🔹 Hover underline */
+  .form-field-underline::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 1;
+  }
+
+  /* 🔹 Focus underline */
+  .form-field-underline::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background-color: #fff;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* 🔹 Hover — біла напівпрозора лінія */
+  .form-field-underline:hover::after,
+  .form-field-underline:has(textarea:focus)::before{
+    transform: scaleX(1);
+    transform-origin: left;
+    opacity: 1;
+  }
+
+  /* 🔹 Focus — біла чітка лінія */
+  .form-field-underline:has(input:focus)::before,
+  .form-field-underline:has(textarea:focus)::before{
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* 🔹 При фокусі приховуємо hover-лінію */
+  .form-field-underline:has(input:focus)::after,
+  .form-field-underline:has(textarea:focus)::after{
+    opacity: 0;
+  }
+
+  /* 🔹 Втрата фокусу — відкат справа наліво */
+  .form-field-underline:not(:has(input:focus)):not(:has(textarea:focus))::before {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+
+  /* 🔹 Втрата ховера — відкат справа наліво */
+  .form-field-underline:not(:hover):not(:has(input:focus)):not(:has(textarea:focus))::after {
+    transform: scaleX(0);
+    transform-origin: right;
+    opacity: 1; 
+  }
+
+
+  .form-field-underline.is-textarea-wrapper::after,
+  .form-field-underline.is-textarea-wrapper::before {
+    bottom: 7px; /* або 1px — для textarea */
+  }
+
+  .contact-content {
+    overflow-y: auto;
+    scrollbar-width: none;             /* Firefox */
+    -ms-overflow-style: none;          /* IE */
+  }
+
+  .contact-content::-webkit-scrollbar {
+    display: none;                     /* Chrome, Safari */
+  }
+  
+  .form-error.visible {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+    
+
+  /* media styles */
+  
+   @media screen and (max-width: 1536px) and (min-width: 992px) {
+    .contact-heading {
+      max-width: 100%;
+    }
+    .modal-header {
+      position: static;
+      padding: 1.25rem 0;
+    }
+    .contact-grid {
+      gap: 10%; 
+      padding-top: 2.5rem;
+    }
+     
+    .contact-heading-wrapper {
+        max-width: 95%;
+        margin-bottom: 3.5rem;
+    }
+     
+    .contact-form {
+      gap: 3rem;
+    } 
+   
+    .field-number {
+      margin-top: 0.5rem;
+    }
+  }
+
+  @media screen and (max-width: 1280px) and (min-width: 992px) {
+    .contact-grid {
+      gap: 10%;
+      padding-top: 1.25rem;
+    }
+    
+    .contact-heading-wrapper {
+        max-width: 95%;
+        margin-bottom: 2.5rem;
+    }
+    
+    
+     .contact-form {
+      gap: 2.5rem;
+    } 
+    
+    .contact-right-column {
+      gap: 2.25rem;
+    }
+    
+    .field-number {
+      margin-top: 0.375rem;
+    }
+    
+    .form-field-stage {
+      gap: 2rem;
+    }
+    
+    .form-field-wrapper {
+      gap: 0.5rem;
+    }
+    
+    input.form-field,
+    textarea.form-field {
+      padding-bottom: 1rem;
+    }
+  } /* ← Цієї дужки не вистачало! */
+
+  @media screen and (max-width: 991px) and (min-width: 768px) {
+    input.form-field,
+    textarea.form-field {
+      padding-bottom: 1rem;
+    }
+    
+    .contact-content {
+      -webkit-overflow-scrolling: touch;
+    }
+
+  }
+
+  @media screen and (max-width: 767px) {
+    
+    input.form-field.w-input,
+    textarea.form-field.w-input {
+      padding-bottom: 0.75rem;
+    }
+    
+    textarea.form-field.w-input {
+      height: 6.5rem;
+    }
+    
+    .contact-content {
+      -webkit-overflow-scrolling: touch;
+    }
+
+  }
+  
+  @media (min-width: 992px) and (max-height: 860px) {
+   
+    .section-hero { 
+      height: auto;
+      padding-top: 9rem;
+      padding-bottom: 7.5rem;
+    }
+  }
+  
+  @media (min-width: 992px) and (max-height: 840px) {
+   
+    .section-hero { 
+      padding-top: 8.125rem;
+    }
+      
+    .hero-grid {
+      gap: 1.5rem 12.5%;
+      grid-template-columns: 1.7fr 1fr;
+    }
+      
+  }
+  
+@media (min-width: 992px) and (max-height: 820px) {
+    
+    .works-wrapper{
+        padding-top: 3rem;
+    }
+
+    .works-text-wrapper{
+      padding: 2.5rem 2.5rem 3rem;
+    }
+
+    .works-count-wrapper{
+        gap: 0.75rem;
+    }
+    
+    .work-preview{
+     width: 21.25rem; 
+    }
+   
+  }  
+
+  @media (min-width: 992px) and (max-height: 800px) {
+    
+    
+    .hero-subtitle {
+      max-width: 80%;
+      text-align: left;
+      align-self: flex-start;
+    }
+    
+    .service-text {
+      grid-template-columns: 1fr;
+      row-gap: 0.5rem;
+    }
+
+    .service-divider {
+      display: none;
+    }
+
+    .service-description{
+      text-align: left;
+    }
+    
+    .hero-grid {
+      gap: 1.25rem 10%;
+      grid-template-columns: 2.25fr 1fr;
+    }
+    
+    .service-text {
+      grid-template-columns: 1fr;
+      row-gap: 0.375rem;
+    }      
+  }  
+  
+  @media (min-width: 992px) and (max-height: 768px) {
+    
+    :root {
+      --_typography---responsive--h1: 4rem;
+    }
+    
+    .hero-grid {
+      gap: 1rem 15%;
+      grid-template-columns: 2.1fr 1fr;
+    }
+    
+    .service-text {
+      grid-template-columns: 1fr;
+      row-gap: 0.25rem;
+    }  
+        
+  }
+  
+  @media (min-width: 992px) and (max-height: 736px) {
+    
+    .hero-grid {
+      gap: 1rem 15%;
+      grid-template-columns: 2.4fr 1fr;
+    }
+   
+ 
+  }  
+  
+   @media (min-width: 992px) and (max-height: 680px) {
+    
+    .header{
+      padding: 1rem 1rem;
+    }
+     
+   .section-hero { 
+      padding-top: 6.75rem;
+    }
+     
+    .hero-grid {
+      gap: 1rem 12.5%;
+      grid-template-columns: 2.5fr 1fr;
+    }
+        
+  }  
+  
+  @media (min-width: 992px) and (max-height: 640px) {
+     
+    .hero-grid {
+      gap: 0.875rem 15%;
+      grid-template-columns: 2.6fr 1fr;
+    }
+    
+    .hero-animation{
+      min-width: 18.75rem;
+    }
+       
+  } 
+  
+    @media screen and (max-width: 1536px) and (min-width: 992px) {
+    
+    :root {
+      --_typography---responsive--h1: 4rem;
+      --_typography---responsive--h2: 3rem;
+      --_typography---responsive--h3: 2.25rem;
+      --_typography---responsive--h4: 1.625rem;
+      --_typography---responsive--body-large: 1.375rem;
+    } 
+    
+    .works-count {
+      font-size: 6rem;
+    }
+    
+    .featured-works-heading {
+      font-size: 8.25rem;
+    }
+           
+     .button-primary.is-large{
+      gap: 1.375rem;
+      padding-left: 1.875rem;
+    }
+   
+    
+    .large-button-text-wrapper{
+      height: 1.375rem;
+     }
+     
+     .large-button-arrow-wrapper{
+       width: 3.125rem;
+       height: 3.125rem;
+       padding-top: 1rem;
+       padding-right: 1rem;
+       padding-bottom: 1rem;
+       padding-left: 1rem;
+  }
+      
+      
+    .hero-subtitle {
+      max-width: 80%;
+      text-align: left;
+      align-self: flex-start;
+    } 
+      
+    .works-wrapper{
+        padding-top: 3rem;
+    }
+
+    .works-text-wrapper{
+      padding: 2.5rem 2.5rem 3rem;
+    }
+
+    .works-count-wrapper{
+        gap: 0.75rem;
+    }
+    
+    .work-preview{
+     width: 21.25rem; 
+    }
+            
+    .section-works{
+     	padding-top: 6rem;
+     	padding-bottom: 4rem;
+    }
+    
+    
+    .section-featured-works{
+     	padding-top: 4rem;
+     	padding-bottom: 4rem;
+    }
+    
+    .section-process{
+     	margin-top: 4rem;
+     	padding-bottom: 4rem;
+    }
+    
+    .section-about{
+     	margin-top: 4rem;
+    }
+          
+    .process-grid{
+      margin-top: 4rem;
+      gap: 5.5rem;
+    }
+      
+    .about-grid{
+      margin-top: 4rem;  
+    }  
+      
+    .main-wrapper{
+     	padding-bottom: 6.5rem;  
+    }
+      
+    .margin-bottom-xlarge{
+     	 margin-bottom: 6.75rem;
+    }
+    
+    .margin-bottom-medium{
+     	margin-bottom: 3.75rem;
+    } 
+      
+    .section-case-hero{
+      padding-top: 10.5rem;
+    }
+      
+    .case-info-wrapper {
+      gap: 3.75rem;
+    }
+    
+    .section-process-timleine{
+     	padding-top: 6.75rem;
+     	padding-bottom: 6.75rem;
+    }
+      
+    .frame-main{
+        margin-bottom: 3.75rem;
+    }
+    
+    .results-wrapper{
+     	grid-column-gap: 3.75rem;
+    }
+    
+    .results-column{
+     	grid-row-gap: 3.75rem;
+    }
+
+	div.results-column.is-right {
+      margin-top: 3.75rem;
+    }
+      
+    .section-feedback {
+      padding-top: 4.75rem;
+      padding-bottom: 4.75rem;
+    }
+      
+    .other-works-grid {
+      margin-top: 3rem;
+      gap: 0rem 3rem;
+    }
+      
+      
+        
+  }
+  
+  
+  @media screen and (max-width: 1366px) and (min-width: 992px) {
+    
+
+    .works-wrapper{
+        padding-top: 2.5rem;
+    }
+
+    .works-text-wrapper{
+      padding: 2rem 2.5rem 2.5rem;
+    }
+
+    .works-count-wrapper{
+        gap: 0.625rem;
+    }
+    
+    .work-preview{
+     width: 18.75rem; 
+    }
+
+
+    .tool-wrapper {
+      padding: 0.625rem;
+    } 
+
+
+    
+  }
+  
+  
+  @media screen and (max-width: 1280px) and (min-width: 992px) {
+
+	:root {
+      --_typography---responsive--h1: 3.5rem;
+      --_typography---responsive--h2: 2.5rem;
+      --_typography---responsive--h3: 2rem;
+      --_typography---responsive--h4: 1.5rem;
+      --_typography---responsive--body-large: 1.25rem;
+    }
+    
+    .works-count {
+      font-size: 5.25rem;
+    }
+      
+    .featured-works-heading {
+      font-size: 6.75rem;
+    }
+     
+     .button-primary.is-xlarge{
+    	gap: 2.25rem;
+    	padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+        padding-right: 0.625rem;
+        padding-left: 3.25rem;
+    }
+   
+    
+    .xlarge-button-text-wrapper{
+    	height: 2.5rem;
+     }
+     
+     .xlarge-button-arrow-wrapper{
+  		 width: 6.5rem;
+  		 height: 6.5rem;
+  		 padding-top: 2rem;
+  		 padding-right: 2rem;
+  		 padding-bottom: 2rem;
+  		 padding-left: 2rem;
+	}
+    
+    .button-primary.is-large{
+      gap: 1.25rem;
+        padding-top: 0.375rem;
+        padding-bottom: 0.375rem;
+        padding-right: 0.375rem;
+        padding-left: 1.5rem;
+    }
+   
+    
+    .large-button-text-wrapper{
+      height: 1.25rem;
+     }
+     
+     .large-button-arrow-wrapper{
+       width: 2.875rem;
+       height: 2.875rem;
+       padding-top: 0.875rem;
+       padding-right: 0.875rem;
+       padding-bottom: 0.875rem;
+       padding-left: 0.875rem;
+  }
+          
+            
+    .hero-intro {
+      gap: 2.5rem;
+    }
+    
+    
+    .hero-content {
+  	  justify-content: flex-start;
+    }
+
+    .hero-subtitle {
+      text-align: left;
+      align-self: flex-start;
+    }
+    
+  .service-divider {
+    display: none;
+  }
+  
+  .service-description{
+  	text-align: left;
+  }
+
+    .quality-slider-wrapper{
+     display: none; 
+    }
+    
+    .tool-wrapper {
+      padding: 0.75rem;
+    } 
+    
+    .tool-wrapper{  
+      flex: 0 1 auto;
+    }
+    
+    
+    /*.paragraphs-large-text-wrapper {
+      grid-row-gap: 1.875rem;
+    }
+    */
+    
+    .section-works{
+     	padding-top: 5rem;
+     	padding-bottom: 3.5rem;
+    }
+    
+    .section-featured-works{
+     	padding-top: 3.5rem;
+     	padding-bottom: 3.5rem;
+    }
+    
+    .section-process{
+     	margin-top: 3.5rem;
+     	padding-bottom: 3.5rem;
+    }
+    
+    .section-about{
+     	margin-top: 3.5rem;
+    }
+    
+    .featured-work-grid{
+      margin-top: -2.75rem;  
+    }
+    
+    .process-grid{
+      margin-top: 3.5rem;  
+      gap: 4.5rem;
+    }
+      
+    .about-grid{
+      margin-top: 3.5rem;  
+    }  
+    
+    .main-wrapper{
+     	padding-bottom: 5.75rem;  
+    }
+    
+    .margin-bottom-xlarge{
+     	 margin-bottom: 5.5rem;
+    }
+    
+    .margin-bottom-medium{
+     	margin-bottom: 3rem;
+    } 
+      
+    .section-case-hero{
+      padding-top: 9.25rem;
+    }
+      
+    .case-info-wrapper {
+      gap: 3rem;
+    }
+    
+    .section-process-timleine{
+     	padding-top: 5.5rem;
+     	padding-bottom: 5.5rem;
+    }
+      
+    .frame-main{
+        margin-bottom: 3rem;
+    }
+    
+    .results-wrapper{
+     	grid-column-gap: 3rem;
+    }
+    
+    .results-column{
+     	grid-row-gap: 3rem;
+    }
+
+	div.results-column.is-right {
+      margin-top: 3rem;
+    }
+    
+    .section-feedback {
+      padding-top: 3.5rem;
+      padding-bottom: 3.5rem;
+    }
+    
+    .other-works-grid {
+      margin-top: 2.5rem;
+      gap: 0rem 2.5rem;
+    }
+  
+    @media screen and (max-width: 1136px) and (min-width: 992px) {
+
+	:root {
+      --_typography---responsive--h1: 3rem;
+    }  
+      
+     .hero-grid {
+      gap: 1rem 12.5%;
+      grid-template-columns: 2.5fr 1fr;
+    }
+    
+    .hero-intro {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+      
+    .hero-subtitle {
+      max-width: none;
+    }
+      
+      .button-primary.is-xlarge{
+      gap: 1.75rem;
+      padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-right: 0.5rem;
+        padding-left: 2.5rem;
+    }
+   
+    
+    .xlarge-button-text-wrapper{
+      height: 2.5rem;
+     }
+     
+     .xlarge-button-arrow-wrapper{
+       width: 5rem;
+       height: 5rem;
+       padding-top: 1.5rem;
+       padding-right: 1.5rem;
+       padding-bottom: 1.5rem;
+       padding-left: 1.5rem;
+      }
+    
+  }
+  
+  @media screen and (max-width: 1024px) and (min-width: 992px) {
+  
+    .featured-works-heading {
+      text-align: left;
+      font-size: 6.75rem;
+    }
+    
+    .featured-work-grid{
+    margin-top: 4rem;
+    }
+  }
+  
+  @media screen and (max-width: 1479px) and (min-width: 992px) {
+  
+    .footer-cta {
+      font-size: 11vw;
+    }
+  }
+  
+  
+  
+</style>
